@@ -38,7 +38,10 @@
  The set of loggers current managed by the shared activity logger. By default, this includes one `AFNetworkActivityConsoleLogger`
  */
 @property (nonatomic, strong, readonly) NSSet <AFNetworkActivityLoggerProtocol> *loggers;
-
+/**
+ Enable JSON description on response values when having a JSON message.
+ */
+@property (assign) BOOL prettyJsonDescription;
 /**
  Returns the shared logger instance.
  */

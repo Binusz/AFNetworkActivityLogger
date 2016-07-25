@@ -138,9 +138,31 @@ static void * AFNetworkRequestStartDate = &AFNetworkRequestStartDate;
         if (request && logger.filterPredicate && [logger.filterPredicate evaluateWithObject:request]) {
             return;
         }
+    
+    if (self.prettyJsonDescription) {
+        responseObject = [self jsonDescriptionForResponseObject:responseObject];
+    }
 
         [logger URLSessionTaskDidFinish:task withResponseObject:responseObject inElapsedTime:elapsedTime withError:error];
     }
 }
+
+- (NSString *)jsonDescriptionForResponseObject:(id)responseObject {
+    NSError * err;
+    NSData *jsonData;
+    
+    if ([responseObject isKindOfClass:[NSDictionary class]]) {
+        jsonData = [NSJSONSerialization dataWithJSONObject:responseObject options:NSJSONWritingPrettyPrinted error:&err];
+        
+        if (err) {
+            return responseObject;
+        } else {
+            return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        }
+    } else {
+        return responseObject;
+    }
+}
+
 
 @end
