@@ -150,16 +150,25 @@ static void * AFNetworkRequestStartDate = &AFNetworkRequestStartDate;
 - (NSString *)jsonDescriptionForResponseObject:(id)responseObject {
     NSError * err;
     NSData *jsonData;
-    
+
     if ([responseObject isKindOfClass:[NSDictionary class]]) {
         jsonData = [NSJSONSerialization dataWithJSONObject:responseObject options:NSJSONWritingPrettyPrinted error:&err];
-        
+
         if (err) {
             return responseObject;
         } else {
             return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         }
-    } else {
+    }else if([responseObject isKindOfClass:[NSData class]]){
+        id response = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
+        if ([response isKindOfClass:[NSDictionary class]] || [response isKindOfClass:[NSArray class]]) {
+            return [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+        }
+        else{
+            return responseObject;
+        }
+    }
+    else {
         return responseObject;
     }
 }
