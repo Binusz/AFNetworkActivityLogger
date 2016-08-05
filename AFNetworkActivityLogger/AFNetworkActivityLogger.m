@@ -151,7 +151,7 @@ static void * AFNetworkRequestStartDate = &AFNetworkRequestStartDate;
     NSError * err;
     NSData *jsonData;
 
-    if ([responseObject isKindOfClass:[NSDictionary class]]) {
+    if ([responseObject isKindOfClass:[NSDictionary class]]|| [responseObject isKindOfClass:[NSArray class]]) {
         jsonData = [NSJSONSerialization dataWithJSONObject:responseObject options:NSJSONWritingPrettyPrinted error:&err];
 
         if (err) {
@@ -159,10 +159,19 @@ static void * AFNetworkRequestStartDate = &AFNetworkRequestStartDate;
         } else {
             return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         }
-    }else if([responseObject isKindOfClass:[NSData class]]){
+    }
+    else if([responseObject isKindOfClass:[NSData class]]){
         id response = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-        if ([response isKindOfClass:[NSDictionary class]] || [response isKindOfClass:[NSArray class]]) {
+        if ([response isKindOfClass:[NSDictionary class]]) {
             return [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+        }
+        else if([response isKindOfClass:[NSArray class]]){
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:response options:NSJSONWritingPrettyPrinted error:&err];
+            if (err) {
+                return responseObject;
+            } else {
+                return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            }
         }
         else{
             return responseObject;
